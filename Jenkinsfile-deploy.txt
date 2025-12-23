@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "apache-web"
+        IMAGE_TAG  = "v1"
+        CONTAINER_NAME = "apache-container"
+    }
+
+    stages {
+        stage('Stop Old Container') {
+            steps {
+                sh '''
+                docker rm -f $CONTAINER_NAME || true
+                '''
+            }
+        }
+
+        stage('Run Apache Container') {
+            steps {
+                sh '''
+                docker run -d \
+                --name $CONTAINER_NAME \
+                -p 8080:80 \
+                --restart always \
+                $IMAGE_NAME:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Verify Container') {
+            steps {
+                sh 'docker ps | grep apache-container'
+            }
+        }
+    }
+}
