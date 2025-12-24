@@ -10,7 +10,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                    url: 'https://github.com/your-repo/apache-docker-project.git'
+                    url: 'https://github.com/Priya-Joshi03/apache-docker.git'
             }
         }
 
