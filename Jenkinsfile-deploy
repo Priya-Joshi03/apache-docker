@@ -10,9 +10,7 @@ pipeline {
     stages {
         stage('Stop Old Container') {
             steps {
-                sh '''
-                docker rm -f $CONTAINER_NAME || true
-                '''
+                sh 'docker rm -f $CONTAINER_NAME || true'
             }
         }
 
@@ -33,5 +31,15 @@ pipeline {
                 sh 'docker ps | grep apache-container'
             }
         }
+
+        stage('Trigger Docker Hub Pipeline') {
+            when {
+                expression { currentBuild.currentResult == 'SUCCESS' }
+            }
+            steps {
+                build job: 'Jenkinsfile-hub'
+            }
+        }
     }
 }
+
