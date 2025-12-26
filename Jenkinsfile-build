@@ -27,5 +27,14 @@ pipeline {
                 sh 'docker images | grep apache-web'
             }
         }
+        stage('Trigger Deploy Pipeline') {
+            when {
+                expression { currentBuild.currentResult == 'SUCCESS' }
+    }
+                steps {
+                build job: 'Jenkins-deploy'
+    }
+}
+
     }
 }
