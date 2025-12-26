@@ -32,7 +32,7 @@ pipeline {
                 expression { currentBuild.currentResult == 'SUCCESS' }
     }
                 steps {
-                build job: 'Jenkins-deploy'
+                build job: 'Jenkinsfile-deploy'
     }
 }
 
