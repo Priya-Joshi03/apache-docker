@@ -38,6 +38,14 @@ pipeline {
                 '''
             }
         }
+        stage('Trigger Deploy Pipeline') {
+            when {
+                expression { currentBuild.currentResult == 'SUCCESS' }
+    }
+            steps {
+                build job: 'Jenkinsfile-deploy'
+    }
+}
     }
 }
 
