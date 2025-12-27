@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "apache-web"
-        IMAGE_TAG  = "v1"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
     }
 
     stages {
@@ -27,14 +27,16 @@ pipeline {
                 sh 'docker images | grep apache-web'
             }
         }
-        stage('Trigger Deploy Pipeline') {
+        stage('Trigger Hub Pipeline') {
             when {
                 expression { currentBuild.currentResult == 'SUCCESS' }
-    }
-                steps {
-                build job: 'Jenkinsfile-hub'
-    }
-}
+            }
+            steps {
+                build job: 'Jenkinsfile-hub', parameters: [
+                    string(name: 'IMAGE_TAG', value: "${IMAGE_TAG}")
+                ]
+            }
+        }
 
     }
 }
