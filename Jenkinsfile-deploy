@@ -4,7 +4,8 @@ pipeline {
     parameters {
         string(
             name: 'IMAGE_TAG',
-            description: 'Docker image tag passed from build pipeline'
+            defaultValue: '${BUILD_NUMBER}',
+            description: 'Docker image tag passed from hub pipeline'
         )
     }
 
@@ -18,7 +19,7 @@ pipeline {
         stage('Pull Image') {
             steps {
                 sh '''
-                docker pull $IMAGE_NAME:$IMAGE_TAG
+                docker pull $IMAGE_NAME:${params.IMAGE_TAG}
                 '''
             }
         }
@@ -38,7 +39,7 @@ pipeline {
                 --name $CONTAINER_NAME \
                 -p 8081:80 \
                 --restart always \
-                $IMAGE_NAME:$IMAGE_TAG
+                $IMAGE_NAME:${params.IMAGE_TAG}
                 '''
             }
         }
