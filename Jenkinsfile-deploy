@@ -1,16 +1,33 @@
 pipeline {
     agent any
 
+    parameters {
+        string(
+            name: 'IMAGE_TAG',
+            description: 'Docker image tag passed from build pipeline'
+        )
+    }
+
     environment {
-        IMAGE_NAME = "priyajoshi032/apache-web"
-        IMAGE_TAG  = "latest"
+        IMAGE_NAME     = "priyajoshi032/apache-web"
         CONTAINER_NAME = "apache-container"
     }
 
     stages {
+
+        stage('Pull Image') {
+            steps {
+                sh '''
+                docker pull $IMAGE_NAME:$IMAGE_TAG
+                '''
+            }
+        }
+
         stage('Stop Old Container') {
             steps {
-                sh 'docker rm -f $CONTAINER_NAME || true'
+                sh '''
+                docker rm -f $CONTAINER_NAME || true
+                '''
             }
         }
 
@@ -28,10 +45,10 @@ pipeline {
 
         stage('Verify Container') {
             steps {
-                sh 'docker ps | grep apache-container'
+                sh '''
+                docker ps | grep $CONTAINER_NAME
+                '''
             }
         }
-
     }
 }
-
