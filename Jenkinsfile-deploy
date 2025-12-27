@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "apache-web"
-        IMAGE_TAG  = "v1"
+        IMAGE_NAME = "priyajoshi032/apache-web"
+        IMAGE_TAG  = "latest"
         CONTAINER_NAME = "apache-container"
     }
 
@@ -32,14 +32,6 @@ pipeline {
             }
         }
 
-        stage('Trigger Docker Hub Pipeline') {
-            when {
-                expression { currentBuild.currentResult == 'SUCCESS' }
-            }
-            steps {
-                build job: 'Jenkinsfile-hub'
-            }
-        }
     }
 }
 
