@@ -1,11 +1,18 @@
 pipeline {
     agent any
 
+    parameters {
+        string(
+            name: 'IMAGE_TAG',
+            defaultValue: '${BUILD_NUMBER}',
+            description: 'Docker image tag passed from build pipeline'
+        )
+    }
+
     environment {
         DOCKERHUB_USER = "priyajoshi032"
         IMAGE_NAME = "apache-web"
-        IMAGE_TAG  = "${BUILD_NUMBER}"
-        DOCKER_IMAGE = "${DOCKERHUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
+        DOCKER_IMAGE = "${DOCKERHUB_USER}/${IMAGE_NAME}:${params.IMAGE_TAG}"
     }
 
     stages {
@@ -26,7 +33,7 @@ pipeline {
         stage('Tag Image') {
             steps {
                 sh '''
-                docker tag $IMAGE_NAME:$IMAGE_TAG $DOCKER_IMAGE
+                docker tag $IMAGE_NAME:${params.IMAGE_TAG} $DOCKER_IMAGE
                 '''
             }
         }
@@ -41,11 +48,12 @@ pipeline {
         stage('Trigger Deploy Pipeline') {
             when {
                 expression { currentBuild.currentResult == 'SUCCESS' }
-    }
+            }
             steps {
-                build job: 'Jenkinsfile-deploy'
+                build job: 'Jenkinsfile-deploy', parameters: [
+                    string(name: 'IMAGE_TAG', value: "${params.IMAGE_TAG}")
+                ]
+            }
+        }
     }
 }
-    }
-}
-
